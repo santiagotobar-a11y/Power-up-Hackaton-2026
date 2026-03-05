@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PowerUp by Sezzle</title>
+<style>
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&display=swap');
+
+:root {
+  --sz-primary: #382757;
+  --sz-primary-hover: #5B3F8C;
+  --sz-violet: #8333D4;
+  --sz-text: #1A1A2E;
+  --sz-text-secondary: #767676;
+  --sz-surface: #F8F7FA;
+  --sz-white: #FFFFFF;
+  --sz-border: #E5E2ED;
+  --sz-radius-card: 14px;
+  --sz-radius-btn: 100px;
+  --font-sans: 'Satoshi', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --gold: #F59E0B;
+  --green: #10B981;
+  --red: #EF4444;
+  --orange: #F97316;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: var(--font-sans);
+  background: #0E0A1A;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ── PHONE ── */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: var(--sz-surface);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.status-bar {
+  background: var(--sz-white);
+  padding: 14px 24px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--sz-text);
+  flex-shrink: 0;
+}
+.status-right { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+/* All screens hidden by default */
+.screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+.screen.active { display: flex; }
+.scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
+.scroll-area::-webkit-scrollbar { display: none; }
+.scroll-pad { height: 24px; }
+
+/* ══════════════════════════════════════════════
+   SCREEN: MAIN APP (Home)
+══════════════════════════════════════════════ */
+#screen-home {
+  background: var(--sz-surface);
+}
+
+.home-nav {
+  background: var(--sz-white);
+  padding: 8px 20px 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--sz-border);
+  flex-shrink: 0;
+}
+.home-spending-chip {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--sz-surface); border-radius: 40px;
+  padding: 8px 14px 8px 8px; cursor: pointer; transition: all 0.2s;
+  border: 1px solid var(--sz-border); flex: 1;
+}
+.home-spending-chip:hover { border-color: var(--sz-primary); background: rgba(56,39,87,0.04); }
+.chip-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sz-primary), var(--sz-violet));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 15px; font-weight: 800; color: white;
+  flex-shrink: 0;
+}
+.chip-info { flex: 1; min-width: 0; }
+.chip-amount { font-family: var(--font-display); font-size: 15px; font-weight: 800; color: var(--sz-text); }
+.chip-label { font-size: 10px; color: var(--sz-text-secondary); display: flex; align-items: center; gap: 3px; }
+.chip-bolt { font-size: 11px; }
+.home-icon-row { display: flex; gap: 8px; }
+.home-icon { width: 38px; height: 38px; border-radius: 50%; background: var(--sz-surface); border: 1px solid var(--sz-border); display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; }
+
+/* PowerUp banner in home */
+.powerup-banner {
+  margin: 12px 16px;
+  background: linear-gradient(135deg, var(--sz-primary) 0%, var(--sz-violet) 100%);
+  border-radius: var(--sz-radius-card);
+  padding: 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+.powerup-banner:hover { transform: scale(0.99); }
+.powerup-banner::before {
+  content: '';
+  position: absolute; top: -30px; right: -30px;
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.powerup-banner::after {
+  content: '';
+  position: absolute; bottom: -20px; right: 20px;
+  width: 70px; height: 70px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+}
+.banner-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.65); margin-bottom: 4px; }
+.banner-title { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: white; margin-bottom: 4px; }
+.banner-title span { color: var(--gold); }
+.banner-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-bottom: 12px; }
+.banner-cta { display: inline-flex; align-items: center; gap: 6px; background: white; color: var(--sz-primary); border-radius: 20px; padding: 7px 14px; font-size: 12px; font-weight: 700; font-family: var(--font-sans); }
+.banner-zara { position: absolute; right: 12px; bottom: 0; font-size: 52px; line-height: 1; }
+
+/* Home bottom nav */
+.home-bottom-nav {
+  background: var(--sz-white);
+  border-top: 1px solid var(--sz-border);
+  display: flex;
+  padding: 8px 0 20px;
+  flex-shrink: 0;
+}
+.hbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  border: none; background: none; cursor: pointer; padding: 4px;
+  font-family: var(--font-sans); font-size: 10px; font-weight: 500; color: var(--sz-text-secondary);
+}
+.hbn-btn.active { color: var(--sz-primary); font-weight: 700; }
+.hbn-icon { font-size: 20px; }
+
+/* ══════════════════════════════════════════════
+   SCREEN: PROFILE
+══════════════════════════════════════════════ */
+#screen-profile { background: var(--sz-surface); }
+.profile-nav {
+  background: var(--sz-white); padding: 8px 20px 12px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--sz-border); flex-shrink: 0;
+}
+.back-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--sz-primary); padding: 0; }
+.profile-nav-title { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--sz-text); }
+
+/* Profile PowerUp banner */
+.profile-powerup-banner {
+  margin: 12px 16px;
+  background: linear-gradient(135deg, #1a0d35 0%, var(--sz-primary) 50%, var(--sz-violet) 100%);
+  border-radius: var(--sz-radius-card); padding: 14px 16px;
+  cursor: pointer; position: relative; overflow: hidden;
+}
+.ppb-row { display: flex; align-items: center; gap: 10px; }
+.ppb-zara { font-size: 36px; flex-shrink: 0; }
+.ppb-text { flex: 1; }
+.ppb-title { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: white; }
+.ppb-sub { font-size: 11px; color: rgba(255,255,255,0.72); margin-top: 2px; }
+.ppb-arrow { color: rgba(255,255,255,0.6); font-size: 18px; }
+
+/* Stat row */
+.stat-row {
+  display: flex; gap: 10px; margin: 0 16px 12px;
+}
+.stat-card {
+  flex: 1; background: var(--sz-white); border: 1px solid var(--sz-border);
+  border-radius: var(--sz-radius-card); padding: 12px; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--sz-primary); }
+.stat-icon-wrap { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 6px; }
+.stat-value { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--sz-text); }
+.stat-label { font-size: 10px; color: var(--sz-text-secondary); font-weight: 500; }
+
+/* Profile menu */
+.profile-section-label { padding: 10px 16px 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sz-text-secondary); }
+.profile-menu-card { background: var(--sz-white); border: 1px solid var(--sz-border); border-radius: var(--sz-radius-card); margin: 0 16px 10px; overflow: hidden; }
+.profile-menu-row {
+  display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+  border-bottom: 1px solid var(--sz-border); cursor: pointer; transition: background 0.15s;
+}
+.profile-menu-row:last-child { border-bottom: none; }
+.profile-menu-row:hover { background: var(--sz-surface); }
+.pmr-icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+.pmr-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--sz-text); }
+.pmr-arrow { color: var(--sz-text-secondary); font-size: 14px; }
+
+/* ══════════════════════════════════════════════
+   SCREEN: ZARA ONBOARDING
+══════════════════════════════════════════════ */
+#screen-onboarding { background: var(--sz-white); }
+.onboard-progress {
+  padding: 12px 20px 8px; background: var(--sz-white); flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px;
+}
+.ob-back { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--sz-text-secondary); flex-shrink: 0; }
+.ob-progress-track { flex: 1; height: 8px; background: var(--sz-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--sz-border); }
+.ob-progress-fill { height: 100%; background: linear-gradient(90deg, var(--sz-primary), var(--sz-violet)); border-radius: 8px; transition: width 0.5s ease; }
+
+/* Zara character SVG */
+.zara-character {
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px 0 8px;
+}
+.zara-svg { width: 100px; height: 100px; }
+
+/* Speech bubble */
+.speech-bubble {
+  margin: 0 32px 20px;
+  background: var(--sz-surface); border: 1.5px solid var(--sz-border);
+  border-radius: 14px 14px 14px 4px; padding: 14px 16px;
+  font-size: 15px; line-height: 1.5; color: var(--sz-text);
+  position: relative;
+}
+.speech-bubble::before {
+  content: ''; position: absolute; left: -8px; bottom: 14px;
+  width: 0; height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 8px solid var(--sz-border);
+}
+.speech-bubble::after {
+  content: ''; position: absolute; left: -6px; bottom: 15px;
+  width: 0; height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 7px solid var(--sz-surface);
+}
+
+/* Onboarding options */
+.ob-options { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+.ob-option {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--sz-white); border: 1.5px solid var(--sz-border);
+  border-radius: 14px; padding: 14px 16px; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.ob-option:hover, .ob-option.selected { border-color: var(--sz-primary); background: rgba(56,39,87,0.03); }
+.ob-option.selected::after {
+  content: '✓'; position: absolute; right: 16px;
+  color: var(--sz-primary); font-weight: 800; font-size: 16px;
+}
+.ob-option-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.ob-option-text { flex: 1; }
+.ob-option-title { font-size: 15px; font-weight: 700; color: var(--sz-text); }
+.ob-option-sub { font-size: 12px; color: var(--sz-text-secondary); margin-top: 1px; }
+
+/* Loader screen */
+.loader-screen {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 40px 32px; gap: 20px; background: var(--sz-white);
+}
+.loader-zara { font-size: 64px; animation: zara-bounce 1s ease-in-out infinite; }
+@keyframes zara-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.loader-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--sz-text); text-align: center; }
+.loader-sub { font-size: 13px; color: var(--sz-text-secondary); text-align: center; line-height: 1.5; }
+.loader-bar-wrap { width: 100%; height: 8px; background: var(--sz-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--sz-border); }
+.loader-bar { height: 100%; background: linear-gradient(90deg, var(--sz-primary), var(--sz-violet)); border-radius: 8px; animation: loader-fill 2.5s ease forwards; }
+@keyframes loader-fill { from{width:0%} to{width:100%} }
+.loader-steps { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.loader-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--sz-text-secondary); }
+.loader-step.done { color: var(--green); }
+.loader-step-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--sz-surface); border: 1.5px solid var(--sz-border); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+.loader-step.done .loader-step-dot { background: var(--green); border-color: var(--green); color: white; }
+
+/* Continue button */
+.ob-footer { padding: 16px 20px 32px; flex-shrink: 0; }
+.btn-primary { background: var(--sz-primary); color: white; border: none; border-radius: var(--sz-radius-btn); padding: 15px 24px; font-family: var(--font-sans); font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; display: block; text-align: center; letter-spacing: 0.2px; }
+.btn-primary:hover { background: var(--sz-primary-hover); }
+.btn-primary:disabled { background: var(--sz-border); color: var(--sz-text-secondary); cursor: not-allowed; }
+
+/* ══════════════════════════════════════════════
+   SCREEN: POWERUP MAIN (3 tabs)
+══════════════════════════════════════════════ */
+#screen-powerup { background: var(--sz-surface); }
+.pu-nav {
+  background: var(--sz-white); padding: 8px 20px 0;
+  border-bottom: 1px solid var(--sz-border); flex-shrink: 0;
+}
+.pu-nav-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.pu-logo { font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--sz-primary); display: flex; align-items: center; gap: 5px; }
+.pu-logo .s-mark { font-size: 18px; }
+.pu-tabs { display: flex; gap: 0; }
+.pu-tab { flex: 1; padding: 10px 4px; border: none; background: none; cursor: pointer; font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--sz-text-secondary); border-bottom: 2.5px solid transparent; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.pu-tab .tab-emoji { font-size: 16px; }
+.pu-tab.active { color: var(--sz-primary); border-bottom-color: var(--sz-primary); font-weight: 800; }
+
+/* ── Profile Tab (Stage 1) ── */
+.profile-hero {
+  background: linear-gradient(180deg, var(--sz-white) 0%, var(--sz-surface) 100%);
+  padding: 16px 16px 12px; text-align: center;
+}
+.ph-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sz-text-secondary); margin-bottom: 4px; }
+.ph-amount { font-family: var(--font-display); font-size: 54px; font-weight: 900; color: var(--sz-primary); line-height: 1; }
+.ph-change { font-size: 12px; color: var(--sz-text-secondary); margin: 2px 0 12px; }
+.ph-change .up { color: var(--green); font-weight: 700; }
+
+/* XP bar */
+.xp-wrap { margin: 0 16px 12px; }
+.xp-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.xp-left { font-size: 12px; font-weight: 700; color: var(--sz-primary); display: flex; align-items: center; gap: 4px; }
+.xp-right { font-size: 11px; color: var(--sz-text-secondary); }
+.xp-right strong { color: var(--sz-primary); font-family: var(--font-display); }
+.xp-track { height: 10px; background: rgba(56,39,87,0.07); border-radius: 10px; overflow: hidden; position: relative; }
+.xp-fill { height: 100%; background: linear-gradient(90deg, var(--sz-primary), var(--sz-violet)); border-radius: 10px; transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1); position: relative; }
+.xp-fill::after { content:''; position:absolute; right:0; top:0; bottom:0; width:12px; background:rgba(255,255,255,0.3); filter:blur(2px); }
+.xp-hint { text-align: center; font-size: 11px; color: var(--sz-text-secondary); margin-top: 4px; }
+.xp-hint strong { color: var(--sz-primary); }
+
+/* Streak */
+.streak-strip {
+  margin: 0 16px 12px; background: var(--sz-white); border: 1px solid var(--sz-border);
+  border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+}
+.streak-fire { font-size: 22px; animation: fire-pulse 1.5s ease-in-out infinite; }
+@keyframes fire-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+.streak-info { flex: 1; }
+.streak-title { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--sz-primary); }
+.streak-sub { font-size: 11px; color: var(--sz-text-secondary); }
+.streak-dots { display: flex; gap: 4px; }
+.sdot { width: 10px; height: 10px; border-radius: 50%; background: var(--sz-border); transition: all 0.3s; }
+.sdot.lit { background: var(--orange); box-shadow: 0 0 6px rgba(249,115,22,0.5); }
+
+/* Dimension cards (Duolingo style) */
+.dims-section { padding: 0 16px 8px; }
+.dims-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sz-text-secondary); margin-bottom: 10px; }
+.dim-card {
+  background: var(--sz-white); border: 1px solid var(--sz-border);
+  border-radius: var(--sz-radius-card); padding: 14px; margin-bottom: 8px;
+  cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+}
+.dim-card:hover { border-color: var(--sz-primary); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,39,87,0.08); }
+.dim-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--dim-color,var(--sz-primary)); border-radius:14px 0 0 14px; }
+.dim-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.dim-icon-wrap {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--dim-bg, rgba(56,39,87,0.08));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  animation: icon-float 3s ease-in-out infinite;
+}
+@keyframes icon-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+.dim-meta { flex: 1; }
+.dim-name { font-size: 14px; font-weight: 700; color: var(--sz-text); margin-bottom: 1px; }
+.dim-sub { font-size: 11px; color: var(--sz-text-secondary); }
+.dim-badge { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; font-family: var(--font-display); white-space: nowrap; }
+.badge-great { background: #EFF7EE; color: #2D4929; }
+.badge-good { background: #E8F5FC; color: #1A425E; }
+.badge-fair { background: #FDF4E7; color: #634215; }
+.badge-low { background: #FAEEED; color: #582522; }
+.dim-progress-track { height: 8px; background: rgba(56,39,87,0.06); border-radius: 8px; overflow: hidden; margin-bottom: 5px; }
+.dim-progress-fill { height: 100%; border-radius: 8px; background: var(--dim-color, var(--sz-primary)); transition: width 1s ease; position: relative; }
+.dim-progress-fill::after { content:''; position:absolute; right:0; top:0; bottom:0; width:8px; background:rgba(255,255,255,0.4); filter:blur(1px); }
+.dim-footer { display: flex; justify-content: space-between; font-size: 11px; color: var(--sz-text-secondary); }
+
+/* Radar */
+.radar-wrap { padding: 8px 16px 4px; display: flex; flex-direction: column; align-items: center; }
+#radarCanvas { display: block; }
+
+/* ── Growth Tab (Stage 2) ── */
+.growth-scroll { padding: 0; }
+
+/* Path map (Duolingo style) */
+.path-header { padding: 12px 16px 8px; background: var(--sz-white); border-bottom: 1px solid var(--sz-border); }
+.path-chapter-banner {
+  background: linear-gradient(90deg, var(--sz-primary), var(--sz-violet));
+  border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+  margin-bottom: 0;
+}
+.path-chapter-text { font-family: var(--font-display); font-size: 12px; font-weight: 800; color: white; }
+.path-chapter-sub { font-size: 11px; color: rgba(255,255,255,0.7); }
+.path-chapter-icon { font-size: 22px; margin-left: auto; }
+
+/* Daily streak + calendar row */
+.daily-row { display: flex; gap: 8px; padding: 12px 16px 0; }
+.streak-mini-card {
+  flex: 1; background: var(--sz-white); border: 1px solid var(--sz-border);
+  border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 8px;
+  cursor: pointer;
+}
+.smc-fire { font-size: 20px; animation: fire-pulse 1.5s ease-in-out infinite; }
+.smc-info { flex: 1; }
+.smc-title { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--orange); }
+.smc-sub { font-size: 10px; color: var(--sz-text-secondary); }
+.calendar-btn {
+  background: var(--sz-white); border: 1px solid var(--sz-border);
+  border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 6px;
+  cursor: pointer; font-size: 12px; font-weight: 700; color: var(--sz-primary);
+  font-family: var(--font-sans);
+}
+
+/* Node path */
+.node-path { padding: 16px 0; display: flex; flex-direction: column; align-items: center; gap: 0; }
+.path-node { display: flex; flex-direction: column; align-items: center; position: relative; }
+.path-node-connector { width: 3px; height: 24px; background: var(--sz-border); }
+.path-node-connector.done { background: linear-gradient(var(--sz-primary), var(--sz-primary)); }
+.node-btn {
+  width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 26px; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.node-btn.active-node {
+  background: linear-gradient(135deg, var(--sz-primary), var(--sz-violet));
+  border-color: rgba(255,255,255,0.3);
+  animation: node-glow 2s ease-in-out infinite;
+  box-shadow: 0 0 0 4px rgba(56,39,87,0.2), 0 4px 16px rgba(56,39,87,0.3);
+}
+@keyframes node-glow { 0%,100%{box-shadow:0 0 0 4px rgba(56,39,87,0.2),0 4px 16px rgba(56,39,87,0.3)} 50%{box-shadow:0 0 0 8px rgba(56,39,87,0.15),0 4px 20px rgba(56,39,87,0.4)} }
+.node-btn.done-node { background: var(--green); border-color: rgba(255,255,255,0.3); }
+.node-btn.locked-node { background: var(--sz-surface); border-color: var(--sz-border); filter: grayscale(0.6); cursor: not-allowed; }
+.node-label { font-size: 11px; font-weight: 700; color: var(--sz-text-secondary); margin-top: 4px; text-align: center; max-width: 80px; }
+.node-xp { font-size: 10px; font-weight: 700; color: var(--sz-primary); }
+
+/* Zara advisor card */
+.zara-advisor-strip {
+  margin: 12px 16px 0;
+  background: linear-gradient(135deg, var(--sz-primary), var(--sz-violet));
+  border-radius: var(--sz-radius-card); padding: 12px 14px;
+  display: flex; align-items: center; gap: 10px; cursor: pointer; transition: opacity 0.2s;
+}
+.zara-advisor-strip:hover { opacity: 0.92; }
+.zara-strip-avatar { font-size: 32px; flex-shrink: 0; }
+.zara-strip-text { flex: 1; }
+.zara-strip-name { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: white; }
+.zara-strip-msg { font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 1px; }
+.zara-strip-btn { background: rgba(255,255,255,0.2); border: none; border-radius: 20px; color: white; font-size: 11px; font-weight: 700; padding: 5px 10px; cursor: pointer; font-family: var(--font-sans); white-space: nowrap; }
+
+/* ── God Tier Tab (Stage 3) ── */
+.god-tier-scroll {}
+.god-header {
+  background: linear-gradient(160deg, var(--sz-primary), #1a0d35);
+  padding: 18px 16px 20px; text-align: center;
+}
+.god-title { font-family: var(--font-display); font-size: 24px; font-weight: 900; color: white; margin-bottom: 4px; }
+.god-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 14px; }
+.god-filter { display: flex; gap: 6px; justify-content: center; }
+.gf-btn { padding: 6px 14px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,0.25); background: none; color: rgba(255,255,255,0.75); font-size: 11px; font-weight: 700; cursor: pointer; font-family: var(--font-sans); transition: all 0.2s; }
+.gf-btn.active { background: white; color: var(--sz-primary); border-color: white; }
+
+/* Medals podium */
+.medal-podium {
+  background: var(--sz-white); padding: 16px;
+  display: flex; justify-content: center; align-items: flex-end; gap: 10px;
+  border-bottom: 1px solid var(--sz-border);
+}
+.podium-entry { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.pod-crown { font-size: 16px; }
+.pod-avatar { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 3px solid; }
+.pod-rank1 .pod-avatar { width: 54px; height: 54px; border-color: var(--gold); background: rgba(245,158,11,0.08); }
+.pod-rank2 .pod-avatar, .pod-rank3 .pod-avatar { width: 42px; height: 42px; border-color: var(--sz-border); background: var(--sz-surface); }
+.pod-name { font-size: 11px; font-weight: 700; color: var(--sz-text); }
+.pod-xp { font-family: var(--font-display); font-size: 11px; font-weight: 800; color: var(--sz-primary); }
+.pod-base { border-radius: 8px 8px 0 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; }
+.pod-rank1 .pod-base { width: 68px; height: 38px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); font-size: 20px; color: var(--gold); }
+.pod-rank2 .pod-base, .pod-rank3 .pod-base { width: 56px; height: 26px; background: var(--sz-surface); border: 1px solid var(--sz-border); font-size: 14px; color: var(--sz-text-secondary); }
+
+/* Leaderboard rows */
+.lb-row {
+  display: flex; align-items: center; gap: 10px; padding: 11px 16px;
+  background: var(--sz-white); border-bottom: 1px solid var(--sz-border);
+  cursor: pointer; transition: background 0.15s;
+}
+.lb-row:hover { background: var(--sz-surface); }
+.lb-row.is-me { background: rgba(56,39,87,0.04); border-left: 3px solid var(--sz-primary); }
+.lb-rank { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: var(--sz-text-secondary); width: 22px; flex-shrink: 0; text-align: center; }
+.lb-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--sz-surface); border: 1px solid var(--sz-border); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.lb-info { flex: 1; }
+.lb-name { font-size: 13px; font-weight: 700; color: var(--sz-text); }
+.lb-sub { font-size: 10px; color: var(--sz-text-secondary); }
+.lb-xp-col { text-align: right; }
+.lb-xp { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--sz-primary); }
+.lb-change { font-size: 10px; font-weight: 700; }
+.lb-change.up { color: var(--green); }
+.lb-change.down { color: var(--red); }
+.lb-change.same { color: var(--sz-text-secondary); }
+
+/* Friends carousel */
+.friends-section { padding: 14px 16px 0; }
+.friends-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sz-text-secondary); margin-bottom: 10px; }
+.friends-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+.friends-scroll::-webkit-scrollbar { display: none; }
+.friend-card {
+  flex-shrink: 0; width: 80px;
+  background: var(--sz-white); border: 1px solid var(--sz-border); border-radius: 12px;
+  padding: 10px 8px; text-align: center; cursor: pointer; transition: border-color 0.2s;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.friend-card:hover { border-color: var(--sz-primary); }
+.friend-card.add-card { border-style: dashed; }
+.friend-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--sz-surface); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid var(--sz-border); }
+.friend-name { font-size: 10px; font-weight: 700; color: var(--sz-text); }
+.friend-xp { font-size: 10px; color: var(--sz-primary); font-family: var(--font-display); font-weight: 700; }
+.friend-action { background: var(--sz-primary); color: white; border: none; border-radius: 20px; padding: 4px 8px; font-size: 10px; font-weight: 700; cursor: pointer; font-family: var(--font-sans); }
+.friend-action.follow { background: rgba(56,39,87,0.08); color: var(--sz-primary); }
+
+/* Challenge section */
+.challenge-card {
+  margin: 12px 16px 0; background: var(--sz-white); border: 1px solid var(--sz-border);
+  border-radius: var(--sz-radius-card); padding: 14px;
+  box-shadow: 0 2px 8px rgba(56,39,87,0.06);
+}
+.cc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.cc-icon { font-size: 24px; }
+.cc-title { font-size: 14px; font-weight: 700; color: var(--sz-text); }
+.cc-sub { font-size: 11px; color: var(--sz-text-secondary); }
+.vs-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.vs-side { flex: 1; }
+.vs-label { font-size: 10px; font-weight: 700; color: var(--sz-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.vs-name { font-size: 13px; font-weight: 700; color: var(--sz-text); }
+.vs-xp { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--sz-primary); }
+.vs-divider { font-family: var(--font-display); font-size: 13px; font-weight: 800; color: var(--sz-text-secondary); flex-shrink: 0; }
+.cc-bar { height: 8px; background: var(--sz-surface); border-radius: 8px; overflow: hidden; border: 1px solid var(--sz-border); display: flex; }
+.cc-bar-me { background: var(--sz-primary); }
+.cc-bar-them { background: rgba(131,51,212,0.3); }
+.cc-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.cc-time { font-size: 11px; color: var(--sz-text-secondary); }
+.cc-btn { padding: 8px 16px; border-radius: var(--sz-radius-btn); background: var(--sz-primary); color: white; border: none; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font-sans); }
+
+/* ══════════════════════════════════════════════
+   SCREEN: LESSON (Duolingo style)
+══════════════════════════════════════════════ */
+#screen-lesson { background: var(--sz-white); }
+.lesson-header {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px 8px;
+  background: var(--sz-white); flex-shrink: 0;
+}
+.lesson-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--sz-text-secondary); flex-shrink: 0; }
+.lesson-progress { flex: 1; height: 10px; background: var(--sz-surface); border-radius: 10px; overflow: hidden; border: 1px solid var(--sz-border); }
+.lesson-progress-fill { height: 100%; background: linear-gradient(90deg, var(--orange), var(--gold)); border-radius: 10px; transition: width 0.5s ease; }
+.lesson-lives { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 700; color: var(--red); flex-shrink: 0; }
+
+/* Lesson content area */
+.lesson-content { flex: 1; padding: 16px; overflow-y: auto; scrollbar-width: none; }
+.lesson-content::-webkit-scrollbar { display: none; }
+.lesson-question { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--sz-text); margin-bottom: 20px; line-height: 1.3; }
+.lesson-mascot { width: 80px; height: 80px; margin: 0 auto 12px; display: block; font-size: 64px; text-align: center; animation: zara-bounce 2s ease-in-out infinite; }
+.lesson-bubble { background: var(--sz-surface); border: 1.5px solid var(--sz-border); border-radius: 14px; padding: 12px 16px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; color: var(--sz-text); text-align: center; }
+
+/* Answer options */
+.lesson-options { display: flex; flex-direction: column; gap: 10px; }
+.lesson-option {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--sz-white); border: 2px solid var(--sz-border); border-radius: 14px;
+  padding: 14px 16px; cursor: pointer; transition: all 0.2s;
+}
+.lesson-option:hover { border-color: var(--sz-primary); background: rgba(56,39,87,0.02); }
+.lesson-option.selected { border-color: var(--sz-primary); background: rgba(56,39,87,0.04); }
+.lesson-option.correct { border-color: var(--green); background: rgba(16,185,129,0.06); }
+.lesson-option.wrong { border-color: var(--red); background: rgba(239,68,68,0.05); }
+.lo-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--sz-surface); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; border: 1px solid var(--sz-border); }
+.lo-text { flex: 1; font-size: 14px; font-weight: 600; color: var(--sz-text); }
+
+/* Lesson footer */
+.lesson-footer { padding: 12px 16px 28px; background: var(--sz-white); flex-shrink: 0; border-top: 1px solid var(--sz-border); }
+
+/* Milestone overlay */
+.milestone-overlay {
+  position: absolute; inset: 0; background: var(--sz-white); z-index: 80;
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px; gap: 16px;
+}
+.milestone-overlay.show { display: flex; }
+.milestone-big-text { font-family: var(--font-display); font-size: 32px; font-weight: 900; color: var(--sz-primary); text-align: center; }
+.milestone-sub { font-size: 14px; color: var(--sz-text-secondary); text-align: center; }
+.milestone-mascot { font-size: 80px; animation: mascot-pop 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes mascot-pop { from{transform:scale(0.3) rotate(-20deg); opacity:0} to{transform:scale(1) rotate(0); opacity:1} }
+.milestone-xp-badge { background: linear-gradient(135deg, var(--gold), var(--orange)); color: white; border-radius: 16px; padding: 12px 24px; display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 22px; font-weight: 900; box-shadow: 0 4px 16px rgba(245,158,11,0.3); }
+.stats-row { display: flex; gap: 10px; width: 100%; }
+.stat-box { flex: 1; border: 2px solid var(--sz-border); border-radius: 14px; padding: 12px; text-align: center; }
+.stat-box.gold { border-color: var(--gold); }
+.stat-box.green-box { border-color: var(--green); }
+.stat-box.blue { border-color: #3B82F6; }
+.stat-box-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sz-text-secondary); margin-bottom: 6px; }
+.stat-box.gold .stat-box-label { color: var(--gold); }
+.stat-box.green-box .stat-box-label { color: var(--green); }
+.stat-box.blue .stat-box-label { color: #3B82F6; }
+.stat-box-val { font-family: var(--font-display); font-size: 22px; font-weight: 900; color: var(--sz-text); display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+/* ══════════════════════════════════════════════
+   SCREEN: DAILY CHALLENGES CALENDAR
+══════════════════════════════════════════════ */
+#screen-calendar { background: var(--sz-surface); }
+.cal-hero {
+  background: linear-gradient(160deg, #2563EB, #1D4ED8);
+  padding: 0 0 0; text-align: center;
+}
+.cal-trophy { font-size: 80px; display: block; padding: 20px 0 16px; }
+.cal-title { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: white; margin-bottom: 16px; }
+
+/* Calendar grid */
+.cal-grid-wrap { background: var(--sz-white); padding: 16px; }
+.cal-month-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.cal-month { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--sz-text); }
+.cal-count { font-size: 13px; color: var(--sz-text-secondary); }
+.cal-day-headers { display: grid; grid-template-columns: repeat(7,1fr); text-align: center; margin-bottom: 8px; }
+.cal-day-header { font-size: 11px; font-weight: 700; color: var(--sz-text-secondary); padding: 4px 0; }
+.cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.cal-day { aspect-ratio: 1; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--sz-text-secondary); cursor: pointer; transition: all 0.2s; }
+.cal-day.has-challenge { background: rgba(56,39,87,0.08); color: var(--sz-primary); font-weight: 800; }
+.cal-day.completed { background: var(--sz-primary); color: white; }
+.cal-day.today { border: 2px solid var(--sz-primary); color: var(--sz-primary); font-weight: 800; }
+.cal-day.challenge-icon { font-size: 18px; background: none; }
+
+.cal-play-btn { display: block; margin: 16px 16px 0; }
+
+/* ══════════════════════════════════════════════
+   CHAT OVERLAY
+══════════════════════════════════════════════ */
+.chat-overlay {
+  position: absolute; inset: 0; background: var(--sz-surface); z-index: 100;
+  display: none; flex-direction: column;
+}
+.chat-overlay.open { display: flex; }
+.chat-nav {
+  background: var(--sz-white); padding: 12px 16px; border-bottom: 1px solid var(--sz-border);
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.chat-back { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--sz-text); padding: 0; }
+.chat-zara-icon { font-size: 32px; flex-shrink: 0; }
+.chat-info { flex: 1; }
+.chat-name { font-family: var(--font-display); font-size: 14px; font-weight: 800; color: var(--sz-text); }
+.chat-status { font-size: 11px; color: var(--green); }
+.chat-voice-btn { background: var(--sz-surface); border: 1.5px solid var(--sz-border); border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 700; color: var(--sz-primary); cursor: pointer; font-family: var(--font-sans); transition: all 0.2s; }
+.chat-voice-btn:hover { background: var(--sz-primary); color: white; border-color: var(--sz-primary); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none; }
+.chat-messages::-webkit-scrollbar { display: none; }
+.msg { max-width: 82%; }
+.msg.bot { align-self: flex-start; }
+.msg.user { align-self: flex-end; }
+.msg-sender { font-size: 10px; font-weight: 700; color: var(--sz-text-secondary); margin-bottom: 3px; padding-left: 4px; }
+.msg-bubble { padding: 10px 13px; border-radius: 14px; font-size: 13px; line-height: 1.5; }
+.msg.bot .msg-bubble { background: var(--sz-white); border: 1px solid var(--sz-border); color: var(--sz-text); border-radius: 4px 14px 14px 14px; }
+.msg.user .msg-bubble { background: var(--sz-primary); color: white; border-radius: 14px 4px 14px 14px; }
+.quick-replies { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 8px; }
+.qr-btn { background: var(--sz-white); border: 1.5px solid var(--sz-border); border-radius: 20px; padding: 6px 12px; font-size: 11px; font-weight: 600; color: var(--sz-primary); cursor: pointer; font-family: var(--font-sans); transition: all 0.15s; }
+.qr-btn:hover { background: var(--sz-primary); color: white; border-color: var(--sz-primary); }
+.chat-input-wrap { padding: 10px 16px 28px; background: var(--sz-white); border-top: 1px solid var(--sz-border); display: flex; gap: 8px; flex-shrink: 0; }
+.chat-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--sz-border); border-radius: var(--sz-radius-btn); font-family: var(--font-sans); font-size: 13px; color: var(--sz-text); outline: none; background: var(--sz-surface); }
+.chat-input:focus { border-color: var(--sz-primary); }
+.chat-send { width: 40px; height: 40px; border-radius: 50%; background: var(--sz-primary); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════ */
+.toast {
+  position: absolute; top: 80px; left: 50%;
+  transform: translateX(-50%) translateY(-30px);
+  background: var(--sz-white); border: 2px solid var(--sz-primary);
+  border-radius: 12px; padding: 10px 16px;
+  font-family: var(--font-display); font-weight: 800; font-size: 13px; color: var(--sz-primary);
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(56,39,87,0.2); z-index: 200; pointer-events: none;
+  opacity: 0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Confetti dots */
+.confetti-wrap { position: absolute; inset: 0; pointer-events: none; z-index: 150; overflow: hidden; }
+.confetti-dot { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: confetti-fall 1.5s ease-out forwards; }
+@keyframes confetti-fall { from{opacity:1;transform:translateY(0) rotate(0)} to{opacity:0;transform:translateY(200px) rotate(720deg)} }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <!-- Status bar (shared) -->
+  <div class="status-bar" id="statusBar">
+    <span>9:41</span>
+    <div class="status-right"><span>●●●●</span><span>WiFi</span><span>🔋</span></div>
+  </div>
+
+  <!-- ══════════════ HOME SCREEN ══════════════ -->
+  <div id="screen-home" class="screen active">
+    <div class="home-nav">
+      <div class="home-spending-chip" onclick="goTo('screen-profile')">
+        <div class="chip-avatar">P</div>
+        <div class="chip-info">
+          <div class="chip-amount">$373.75</div>
+          <div class="chip-label"><span class="chip-bolt">⚡</span>Spending Power</div>
+        </div>
+      </div>
+      <div class="home-icon-row">
+        <div class="home-icon">❤️</div>
+        <div class="home-icon">🔔</div>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <!-- Search -->
+      <div style="padding:10px 16px 0">
+        <div style="background:var(--sz-white);border:1px solid var(--sz-border);border-radius:30px;padding:10px 16px;display:flex;align-items:center;gap:8px;color:var(--sz-text-secondary);font-size:14px">
+          <span>🔍</span><span>Search Stores!!!</span>
+        </div>
+      </div>
+
+      <!-- PowerUp banner -->
+      <div class="powerup-banner" onclick="goTo('screen-onboarding')">
+        <div class="banner-eyebrow">New · Level Up Your Limit</div>
+        <div class="banner-title">Meet <span>PowerUp</span> ⚡</div>
+        <div class="banner-sub">Earn XP, complete challenges, unlock higher spending power.</div>
+        <div class="banner-cta">Start Now →</div>
+        <div class="banner-zara">🤖</div>
+      </div>
+
+      <!-- Sezzle brand banner -->
+      <div style="margin:0 16px 12px;background:linear-gradient(90deg,var(--sz-primary),var(--sz-violet));border-radius:var(--sz-radius-card);padding:14px 20px;display:flex;align-items:center;gap:12px">
+        <div>
+          <div style="font-family:var(--font-display);font-size:11px;font-weight:700;color:rgba(255,255,255,0.65);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px">sezzle</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:900;color:white">Buy Now, Pay Later</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:2px">0% interest · 4 equal payments</div>
+        </div>
+        <div style="margin-left:auto;font-size:36px">🛍️</div>
+      </div>
+
+      <!-- Most Popular Brands label -->
+      <div style="padding:6px 16px 10px;font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--sz-text)">Most Popular Brands</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 12px">
+        <div onclick="toast('Opening Target...')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:56px;height:56px;border-radius:50%;background:#CC0000;display:flex;align-items:center;justify-content:center;font-size:24px">🎯</div>
+          <div style="font-size:11px;font-weight:600;color:var(--sz-text);text-align:center">Target Gift Card</div>
+        </div>
+        <div onclick="toast('Opening Walmart...')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:56px;height:56px;border-radius:50%;background:#0071CE;display:flex;align-items:center;justify-content:center;font-size:24px">🏪</div>
+          <div style="font-size:11px;font-weight:600;color:var(--sz-text);text-align:center">Walmart</div>
+        </div>
+        <div onclick="toast('Opening Nike...')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:56px;height:56px;border-radius:50%;background:#111;display:flex;align-items:center;justify-content:center;font-size:24px">👟</div>
+          <div style="font-size:11px;font-weight:600;color:var(--sz-text);text-align:center">NIKE</div>
+        </div>
+        <div onclick="toast('Opening GameStop...')" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:56px;height:56px;border-radius:50%;background:#E60012;display:flex;align-items:center;justify-content:center;font-size:24px">🎮</div>
+          <div style="font-size:11px;font-weight:600;color:var(--sz-text);text-align:center">GameStop</div>
+        </div>
+      </div>
+
+      <div class="scroll-pad"></div>
+    </div>
+    <div class="home-bottom-nav">
+      <button class="hbn-btn active"><span class="hbn-icon">🛒</span>Shop</button>
+      <button class="hbn-btn" onclick="toast('Products coming soon!')"><span class="hbn-icon">📦</span>Products</button>
+      <button class="hbn-btn" onclick="toast('Orders coming soon!')"><span class="hbn-icon">📋</span>Orders</button>
+      <button class="hbn-btn" onclick="toast('Virtual Card coming soon!')"><span class="hbn-icon">💳</span>Virtual Card</button>
+      <button class="hbn-btn" onclick="toast('Earn coming soon!')"><span class="hbn-icon">💰</span>Earn</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ PROFILE SCREEN ══════════════ -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-nav">
+      <button class="back-btn" onclick="goTo('screen-home')">‹</button>
+      <div class="profile-nav-title">Hi, Pablo 👋</div>
+    </div>
+    <div class="scroll-area">
+      <!-- Stats row -->
+      <div class="stat-row" style="margin-top:12px">
+        <div class="stat-card" onclick="goTo('screen-onboarding')">
+          <div class="stat-icon-wrap" style="background:rgba(56,39,87,0.08)">⚡</div>
+          <div class="stat-value">$373.75</div>
+          <div class="stat-label">Spending Power</div>
+        </div>
+        <div class="stat-card" onclick="toast('Payment streak: 0/5')">
+          <div class="stat-icon-wrap" style="background:rgba(245,158,11,0.1)">🏆</div>
+          <div class="stat-value">0 / 5</div>
+          <div class="stat-label">Payment Streak</div>
+        </div>
+      </div>
+
+      <!-- PowerUp banner on profile -->
+      <div class="profile-powerup-banner" onclick="goTo('screen-onboarding')">
+        <div class="ppb-row">
+          <div class="ppb-zara">🤖</div>
+          <div class="ppb-text">
+            <div class="ppb-title">⚡ PowerUp — Level Up Your Limit</div>
+            <div class="ppb-sub">Zara has a personalized plan ready for you. Tap to start.</div>
+          </div>
+          <div class="ppb-arrow">›</div>
+        </div>
+      </div>
+
+      <!-- Menu sections -->
+      <div class="profile-section-label">Subscriptions</div>
+      <div class="profile-menu-card">
+        <div class="profile-menu-row" onclick="toast('Sezzle Anywhere — earn 400 XP in PowerUp!')">
+          <div class="pmr-icon">📍</div>
+          <div class="pmr-label">Anywhere</div>
+          <div class="pmr-arrow">›</div>
+        </div>
+      </div>
+
+      <div class="profile-section-label">Manage Account</div>
+      <div class="profile-menu-card">
+        <div class="profile-menu-row" onclick="toast('Personal Information')"><div class="pmr-icon">👤</div><div class="pmr-label">Personal Information</div><div class="pmr-arrow">›</div></div>
+        <div class="profile-menu-row" onclick="toast('Social Profile')"><div class="pmr-icon">🤝</div><div class="pmr-label">Social Profile</div><div class="pmr-arrow">›</div></div>
+        <div class="profile-menu-row" onclick="toast('Payment Methods')"><div class="pmr-icon">💳</div><div class="pmr-label">Payment Methods</div><div class="pmr-arrow">›</div></div>
+        <div class="profile-menu-row" onclick="toast('Notifications')"><div class="pmr-icon">🔔</div><div class="pmr-label">Notifications</div><div class="pmr-arrow">›</div></div>
+        <div class="profile-menu-row" onclick="toast('Saved')"><div class="pmr-icon">❤️</div><div class="pmr-label">Saved</div><div class="pmr-arrow">›</div></div>
+      </div>
+
+      <div class="profile-section-label">Benefits</div>
+      <div class="profile-menu-card">
+        <div class="profile-menu-row" onclick="toast('Sezzle Up — subscribe to earn 400 XP!')"><div class="pmr-icon">⭐</div><div class="pmr-label">Sezzle Up</div><div class="pmr-arrow">›</div></div>
+      </div>
+
+      <div class="scroll-pad"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ ONBOARDING / ZARA INTRO ══════════════ -->
+  <div id="screen-onboarding" class="screen">
+    <div class="onboard-progress">
+      <button class="ob-back" onclick="obBack()">←</button>
+      <div class="ob-progress-track"><div class="ob-progress-fill" id="obProgress" style="width:20%"></div></div>
+    </div>
+    <!-- Onboarding steps injected by JS -->
+    <div id="obStepContent" style="flex:1;overflow:hidden;display:flex;flex-direction:column"></div>
+    <div class="ob-footer">
+      <button class="btn-primary" id="obContinueBtn" onclick="obNext()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ POWERUP MAIN ══════════════ -->
+  <div id="screen-powerup" class="screen">
+    <div class="pu-nav">
+      <div class="pu-nav-top">
+        <button style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--sz-primary);padding:0" onclick="goTo('screen-home')">‹</button>
+        <div class="pu-logo">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 7.5L19.5 8.5L15 13L16.5 19L11 16L5.5 19L7 13L2.5 8.5L8.5 7.5L11 2Z" fill="#382757"/></svg>
+          <span>Power<span style="color:var(--sz-violet)">Up</span></span>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+          <div style="background:rgba(56,39,87,0.08);border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;color:var(--sz-primary);font-family:var(--font-display)">⭐ <span id="xpCountNav">0</span> XP</div>
+          <div style="font-size:22px;cursor:pointer" onclick="openChat()">🤖</div>
+        </div>
+      </div>
+      <div class="pu-tabs">
+        <button class="pu-tab active" id="tab-profile" onclick="switchPUTab('profile', this)"><span class="tab-emoji">🎯</span>Profile</button>
+        <button class="pu-tab" id="tab-growth" onclick="switchPUTab('growth', this)"><span class="tab-emoji">🚀</span>Growth</button>
+        <button class="pu-tab" id="tab-godtier" onclick="switchPUTab('godtier', this)"><span class="tab-emoji">👑</span>God Tier</button>
+      </div>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="pu-profile" class="scroll-area" style="background:var(--sz-surface)">
+      <div class="profile-hero">
+        <div class="ph-eyebrow">Your Spending Power</div>
+        <div class="ph-amount" id="heroAmount">$450</div>
+        <div class="ph-change"><span class="up">↑ +$30</span> since last month</div>
+      </div>
+      <div class="xp-wrap">
+        <div class="xp-row">
+          <div class="xp-left">⭐ <span id="xpCount">0 XP</span></div>
+          <div class="xp-right"><strong id="xpToNext">1,000 XP</strong> to next +$10</div>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+        <div class="xp-hint">Every <strong>1,000 XP</strong> = <strong>+$10</strong> spending power</div>
+      </div>
+      <div class="streak-strip">
+        <div class="streak-fire">🔥</div>
+        <div class="streak-info">
+          <div class="streak-title">3-Day Streak!</div>
+          <div class="streak-sub">4 more days for 1.5× XP multiplier</div>
+        </div>
+        <div class="streak-dots" id="streakDots"></div>
+      </div>
+      <div class="radar-wrap">
+        <canvas id="radarCanvas" width="300" height="300"></canvas>
+      </div>
+      <div class="dims-section">
+        <div class="dims-title">Spending Power Dimensions</div>
+        <div id="dimCards"></div>
+      </div>
+      <div class="scroll-pad"></div>
+    </div>
+
+    <!-- Growth Tab -->
+    <div id="pu-growth" class="scroll-area" style="display:none;background:var(--sz-surface)">
+      <div style="background:var(--sz-white);padding:12px 16px;border-bottom:1px solid var(--sz-border)">
+        <div class="path-chapter-banner">
+          <div><div class="path-chapter-text">Stage 1, Section 1</div><div class="path-chapter-sub" style="font-size:11px;color:rgba(255,255,255,0.7)">Financial Foundations</div></div>
+          <div class="path-chapter-icon">📖</div>
+        </div>
+      </div>
+
+      <div class="daily-row">
+        <div class="streak-mini-card">
+          <div class="smc-fire">🔥</div>
+          <div class="smc-info">
+            <div class="smc-title">3-Day Streak</div>
+            <div class="smc-sub">Keep it up for 1.5× XP!</div>
+          </div>
+        </div>
+        <div class="calendar-btn" onclick="goTo('screen-calendar')">📅 Daily</div>
+      </div>
+
+      <!-- Zara advisor -->
+      <div class="zara-advisor-strip" onclick="openChat()">
+        <div class="zara-strip-avatar">🤖</div>
+        <div class="zara-strip-text">
+          <div class="zara-strip-name">Zara · Your Growth Hacker</div>
+          <div class="zara-strip-msg">Link your bank account — it's worth 500 XP 🏦</div>
+        </div>
+        <button class="zara-strip-btn">Chat ›</button>
+      </div>
+
+      <!-- Path nodes -->
+      <div class="node-path" id="nodePath"></div>
+      <div class="scroll-pad"></div>
+    </div>
+
+    <!-- God Tier Tab -->
+    <div id="pu-godtier" class="scroll-area" style="display:none;background:var(--sz-surface)">
+      <div class="god-header">
+        <div class="god-title">👑 God Tier</div>
+        <div class="god-sub">March 2026 · Resets in 26 days</div>
+        <div class="god-filter">
+          <button class="gf-btn active" onclick="setGodFilter(this)">Monthly</button>
+          <button class="gf-btn" onclick="setGodFilter(this)">All-Time</button>
+          <button class="gf-btn" onclick="setGodFilter(this)">Friends</button>
+        </div>
+      </div>
+      <!-- Podium -->
+      <div class="medal-podium">
+        <div class="podium-entry pod-rank2">
+          <div class="pod-avatar">😎</div>
+          <div class="pod-name">Marcus W.</div>
+          <div class="pod-xp">8,420 XP</div>
+          <div class="pod-base">2</div>
+        </div>
+        <div class="podium-entry pod-rank1">
+          <div class="pod-crown">👑</div>
+          <div class="pod-avatar">🌟</div>
+          <div class="pod-name">Sarah C.</div>
+          <div class="pod-xp">11,250 XP</div>
+          <div class="pod-base">1</div>
+        </div>
+        <div class="podium-entry pod-rank3">
+          <div class="pod-avatar">🔥</div>
+          <div class="pod-name">Priya P.</div>
+          <div class="pod-xp">7,180 XP</div>
+          <div class="pod-base">3</div>
+        </div>
+      </div>
+      <!-- LB rows -->
+      <div id="lbRows"></div>
+      <!-- Friends carousel -->
+      <div class="friends-section">
+        <div class="friends-title">Challenge Friends</div>
+        <div class="friends-scroll" id="friendsScroll"></div>
+      </div>
+      <!-- VS challenge -->
+      <div class="challenge-card">
+        <div class="cc-header"><div class="cc-icon">⚔️</div><div><div class="cc-title">Weekly XP Battle</div><div class="cc-sub">First to 500 XP wins 250 bonus XP</div></div></div>
+        <div class="vs-row">
+          <div class="vs-side"><div class="vs-label">You</div><div class="vs-name">Jordan M.</div><div class="vs-xp">312 XP</div></div>
+          <div class="vs-divider">VS</div>
+          <div class="vs-side" style="text-align:right"><div class="vs-label" style="text-align:right">Opponent</div><div class="vs-name">Alex K.</div><div class="vs-xp">287 XP</div></div>
+        </div>
+        <div class="cc-bar"><div class="cc-bar-me" style="width:52%"></div><div class="cc-bar-them" style="flex:1"></div></div>
+        <div class="cc-footer"><div class="cc-time">⏱ 3 days left</div><button class="cc-btn" onclick="toast('Earning XP! 🔥')">Earn More XP</button></div>
+      </div>
+      <div style="padding:12px 16px 0"><button class="btn-primary" onclick="toast('Challenge sent! ⚔️')">Challenge a Friend</button></div>
+      <div class="scroll-pad"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ LESSON SCREEN ══════════════ -->
+  <div id="screen-lesson" class="screen">
+    <div class="lesson-header">
+      <button class="lesson-close" onclick="goTo('screen-powerup')">✕</button>
+      <div class="lesson-progress"><div class="lesson-progress-fill" id="lessonProgress" style="width:33%"></div></div>
+      <div class="lesson-lives">💙 3</div>
+    </div>
+    <div class="lesson-content" id="lessonContent"></div>
+    <div class="lesson-footer">
+      <button class="btn-primary" id="lessonCheckBtn" onclick="checkAnswer()">Check</button>
+    </div>
+    <!-- Milestone overlays -->
+    <div class="milestone-overlay" id="milestone-streak">
+      <div class="milestone-mascot">🤖</div>
+      <div class="milestone-big-text">10 in a row!</div>
+      <div class="milestone-sub">Zara is impressed 💪</div>
+      <button class="btn-primary" onclick="closeMilestone('milestone-streak')" style="width:100%">Keep Going!</button>
+    </div>
+    <div class="milestone-overlay" id="milestone-complete">
+      <div class="milestone-mascot">🤖</div>
+      <div class="milestone-big-text">You completed the lesson!</div>
+      <div class="milestone-sub">Amazing work, Jordan!</div>
+      <div class="milestone-xp-badge">⚡ +<span id="lessonXPEarned">50</span> XP</div>
+      <div class="stats-row">
+        <div class="stat-box gold"><div class="stat-box-label">Total XP</div><div class="stat-box-val">⚡ <span id="totalXPStat">0</span></div></div>
+        <div class="stat-box green-box"><div class="stat-box-label">Accuracy</div><div class="stat-box-val">100%</div></div>
+        <div class="stat-box blue"><div class="stat-box-label">Time</div><div class="stat-box-val">1:45</div></div>
+      </div>
+      <button class="btn-primary" onclick="finishLesson()" style="width:100%">Collect XP!</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ CALENDAR SCREEN ══════════════ -->
+  <div id="screen-calendar" class="screen">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 16px 10px;background:var(--sz-white);border-bottom:1px solid var(--sz-border);flex-shrink:0">
+      <button style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--sz-primary)" onclick="goTo('screen-powerup')">‹</button>
+      <div style="font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--sz-text)">Daily Challenges</div>
+    </div>
+    <div class="scroll-area">
+      <div class="cal-hero">
+        <div class="cal-trophy">🏆</div>
+        <div class="cal-title">Daily Challenges</div>
+      </div>
+      <div class="cal-grid-wrap">
+        <div class="cal-month-row">
+          <div class="cal-month">March 2026</div>
+          <div class="cal-count">📅 5/31</div>
+        </div>
+        <div class="cal-day-headers">
+          <div class="cal-day-header">S</div><div class="cal-day-header">M</div><div class="cal-day-header">T</div>
+          <div class="cal-day-header">W</div><div class="cal-day-header">T</div><div class="cal-day-header">F</div><div class="cal-day-header">S</div>
+        </div>
+        <div class="cal-days" id="calDays"></div>
+      </div>
+      <div class="cal-play-btn">
+        <button class="btn-primary" onclick="goTo('screen-lesson')">▶ Play Today's Challenge</button>
+      </div>
+      <div class="scroll-pad"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CHAT OVERLAY ══════════════ -->
+  <div class="chat-overlay" id="chatOverlay">
+    <div class="chat-nav">
+      <button class="chat-back" onclick="closeChat()">←</button>
+      <div class="chat-zara-icon">🤖</div>
+      <div class="chat-info">
+        <div class="chat-name">Zara</div>
+        <div class="chat-status">● Online · Growth Hacker</div>
+      </div>
+      <button class="chat-voice-btn" onclick="toast('🎙 Voice mode coming soon!')">🎙 Voice</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg bot"><div class="msg-sender">Zara</div><div class="msg-bubble">Hey Jordan! 👋 I've checked your profile — your biggest win right now is linking your bank account. That's +500 XP instantly. Want me to walk you through it?</div></div>
+    </div>
+    <div class="quick-replies">
+      <button class="qr-btn" onclick="sendMsg('How do I link my bank?')">🏦 Link bank?</button>
+      <button class="qr-btn" onclick="sendMsg('What\'s my weakest dimension?')">📊 Weaknesses?</button>
+      <button class="qr-btn" onclick="sendMsg('How close am I to God Tier?')">👑 Next rank?</button>
+    </div>
+    <div class="chat-input-wrap">
+      <input class="chat-input" id="chatInput" placeholder="Ask Zara anything..." onkeydown="if(event.key==='Enter')sendChatMsg()"/>
+      <button class="chat-send" onclick="sendChatMsg()">➤</button>
+    </div>
+  </div>
+
+  <!-- Toast + confetti -->
+  <div class="toast" id="toast"></div>
+  <div class="confetti-wrap" id="confettiWrap"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const dims = [
+  { id:'payments', icon:'💳', name:'Payment History', sub:'Highest impact', color:'#10B981', bg:'rgba(16,185,129,0.1)', status:'fair', label:'Needs Attention', score:38, tasks:[{t:'Pay next installment on time',xp:50,done:false},{t:'2 consecutive on-time payments',xp:80,done:false},{t:'Set up payment reminder',xp:15,done:false}] },
+  { id:'identity', icon:'🛡️', name:'Identity & Profile', sub:'Trust signals', color:'#382757', bg:'rgba(56,39,87,0.08)', status:'great', label:'Excellent', score:88, tasks:[{t:'Connect bank account (ACH)',xp:500,done:false},{t:'Verify government ID',xp:40,done:false},{t:'Confirm address',xp:5,done:true}] },
+  { id:'engagement', icon:'🔥', name:'Engagement', sub:'Active = more power', color:'#F59E0B', bg:'rgba(245,158,11,0.1)', status:'good', label:'Good', score:65, tasks:[{t:'Complete a purchase this week',xp:15,done:false},{t:'Achieve 7-day payment streak',xp:40,done:false}] },
+  { id:'education', icon:'🎓', name:'Education', sub:'Learn to grow faster', color:'#8333D4', bg:'rgba(131,51,212,0.1)', status:'low', label:'Not Started', score:15, tasks:[{t:'"How Your Limit Works" (2 min)',xp:20,done:false},{t:'Complete the Spending Power quiz',xp:30,done:false},{t:'Finish all 5 lessons',xp:60,done:false}] },
+  { id:'social', icon:'🤝', name:'Social & Referrals', sub:'Grow the community', color:'#3B82F6', bg:'rgba(59,130,246,0.1)', status:'low', label:'Not Started', score:12, tasks:[{t:'Refer a friend',xp:300,done:false},{t:'Subscribe to Sezzle Anywhere',xp:400,done:false}] },
+];
+
+const pathNodes = [
+  { icon:'💳', label:'Payment Basics', xp:'50 XP', state:'active' },
+  { icon:'🏦', label:'Link Your Bank', xp:'500 XP', state:'locked' },
+  { icon:'🎓', label:'How Limits Work', xp:'20 XP', state:'locked' },
+  { icon:'🤝', label:'Refer a Friend', xp:'300 XP', state:'locked' },
+  { icon:'📊', label:'Score Builder', xp:'75 XP', state:'locked' },
+];
+
+const lbRows = [
+  { rank:4, av:'🎯', name:'Tyler B.', sub:'Level 12', xp:'6,940', ch:'up' },
+  { rank:5, av:'💪', name:'Chloe M.', sub:'Level 10', xp:'5,800', ch:'up' },
+  { rank:6, av:'⚡', name:'James R.', sub:'Level 9', xp:'5,210', ch:'same' },
+  { rank:7, av:'🌟', name:'Jordan M.', sub:'You · Level 8', xp:'4,580', ch:'up', me:true },
+  { rank:8, av:'🔥', name:'Sam T.', sub:'Level 7', xp:'3,920', ch:'down' },
+];
+
+const friends = [
+  { av:'👤', name:'Amanda', xp:'2,100', action:'Follow' },
+  { av:'🏆', name:'Carlos', xp:'5,400', action:'Challenge' },
+  { av:'💡', name:'Maya', xp:'1,820', action:'Follow' },
+  { av:'🎮', name:'Derek', xp:'3,200', action:'Challenge' },
+  { add:true },
+];
+
+const lessonQs = [
+  { q:'Which action gives you the MOST XP in PowerUp?', mascot:'🤖', options:[{icon:'💳',t:'Making on-time payments'},{icon:'🏦',t:'Linking your bank account',correct:true},{icon:'🎓',t:'Completing a lesson'},{icon:'🔥',t:'Logging in daily'}] },
+  { q:'What happens when you miss a scheduled payment?', mascot:'🤖', options:[{icon:'📉',t:'Your spending power decreases',correct:true},{icon:'🤷',t:'Nothing happens'},{icon:'📈',t:'Your spending power increases'},{icon:'💸',t:'You get a fee waived'}] },
+  { q:'ACH bank payments are better because they...', mascot:'🤖', options:[{icon:'💰',t:'Earn you more XP and reduce fees',correct:true},{icon:'🔐',t:'Are more secure only'},{icon:'🐢',t:'Process faster than cards'},{icon:'🎁',t:'Come with gift cards'}] },
+];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let taskStates = {};
+dims.forEach(d => { taskStates[d.id] = d.tasks.map(t => t.done); });
+let xpEarned = 0;
+let lessonQ = 0, lessonSelected = null, obStep = 0;
+let obSelectedVals = {};
+const XP_PER_LEVEL = 1000, BASE_POWER = 450;
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.display = 'none'; });
+  const el = document.getElementById(screenId);
+  el.style.display = 'flex'; el.classList.add('active');
+  if (screenId === 'screen-powerup') { renderDims(); buildNodes(); buildLB(); buildFriends(); updateXP(); }
+  if (screenId === 'screen-lesson') { loadLesson(0); }
+  if (screenId === 'screen-calendar') { buildCalendar(); }
+  if (screenId === 'screen-onboarding') { renderObStep(); }
+}
+
+// ══════════════════════════════════════════════
+// POWERUP TABS
+// ══════════════════════════════════════════════
+function switchPUTab(tab, btn) {
+  document.querySelectorAll('.pu-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('pu-profile').style.display = tab==='profile' ? 'block' : 'none';
+  document.getElementById('pu-growth').style.display = tab==='growth' ? 'block' : 'none';
+  document.getElementById('pu-godtier').style.display = tab==='godtier' ? 'block' : 'none';
+  if (tab==='profile') drawRadar();
+}
+
+// ══════════════════════════════════════════════
+// XP
+// ══════════════════════════════════════════════
+function getXP() { return dims.reduce((s,d) => s+d.tasks.reduce((ss,t,ti) => ss+(taskStates[d.id][ti]?t.xp:0), 0), 0); }
+function updateXP() {
+  const x = getXP(), into = x%XP_PER_LEVEL, pct = (into/XP_PER_LEVEL)*100;
+  const power = BASE_POWER + Math.floor(x/XP_PER_LEVEL)*10;
+  const el = id => document.getElementById(id);
+  if(el('xpCount')) el('xpCount').textContent = x.toLocaleString()+' XP';
+  if(el('xpToNext')) el('xpToNext').textContent = (XP_PER_LEVEL-into).toLocaleString()+' XP';
+  if(el('xpFill')) el('xpFill').style.width = pct+'%';
+  if(el('heroAmount')) el('heroAmount').textContent = '$'+power;
+  if(el('xpCountNav')) el('xpCountNav').textContent = x.toLocaleString();
+}
+
+// ══════════════════════════════════════════════
+// STREAK DOTS
+// ══════════════════════════════════════════════
+function buildStreakDots() {
+  const wrap = document.getElementById('streakDots');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  for(let i=0;i<7;i++){const d=document.createElement('div');d.className='sdot'+(i<3?' lit':'');wrap.appendChild(d);}
+}
+
+// ══════════════════════════════════════════════
+// DIMENSION CARDS
+// ══════════════════════════════════════════════
+function dimScore(d) {
+  const done = taskStates[d.id].filter(Boolean).length;
+  return Math.min(100, d.score + (done/Math.max(d.tasks.length,1))*(100-d.score)*0.5);
+}
+function renderDims() {
+  const c = document.getElementById('dimCards'); if(!c) return;
+  c.innerHTML = '';
+  dims.forEach(d => {
+    const sc = dimScore(d);
+    const badgeClass = {great:'badge-great',good:'badge-good',fair:'badge-fair',low:'badge-low'}[d.status]||'badge-fair';
+    const el = document.createElement('div');
+    el.className = 'dim-card';
+    el.style.setProperty('--dim-color', d.color);
+    el.style.setProperty('--dim-bg', d.bg);
+    el.innerHTML = `
+      <div class="dim-header">
+        <div class="dim-icon-wrap">${d.icon}</div>
+        <div class="dim-meta">
+          <div class="dim-name">${d.name}</div>
+          <div class="dim-sub">${d.sub}</div>
+        </div>
+        <div class="dim-badge ${badgeClass}">${d.label}</div>
+      </div>
+      <div class="dim-progress-track"><div class="dim-progress-fill" style="width:${sc}%"></div></div>
+      <div class="dim-footer">
+        <span>${Math.round(sc)}% complete</span>
+        <span>${taskStates[d.id].filter(Boolean).length}/${d.tasks.length} tasks</span>
+      </div>`;
+    el.onclick = () => toast(`${d.name}: ${Math.round(sc)}% complete · ${d.label}`);
+    c.appendChild(el);
+  });
+}
+
+// ══════════════════════════════════════════════
+// RADAR CHART
+// ══════════════════════════════════════════════
+function drawRadar() {
+  const canvas = document.getElementById('radarCanvas'); if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx=canvas.width/2, cy=canvas.height/2, R=98, N=dims.length;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const pt=(i,r)=>{const a=(i/N)*Math.PI*2-Math.PI/2;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  for(let r=1;r<=4;r++){ctx.beginPath();for(let i=0;i<N;i++){const[x,y]=pt(i,R*r/4);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.closePath();ctx.strokeStyle=r===4?'rgba(56,39,87,0.15)':'rgba(56,39,87,0.06)';ctx.lineWidth=1;ctx.stroke();}
+  for(let i=0;i<N;i++){const[x,y]=pt(i,R);ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.strokeStyle='rgba(56,39,87,0.07)';ctx.lineWidth=1;ctx.stroke();}
+  ctx.beginPath();dims.forEach((d,i)=>{const[x,y]=pt(i,R*dimScore(d)/100);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.closePath();
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);g.addColorStop(0,'rgba(56,39,87,0.28)');g.addColorStop(1,'rgba(56,39,87,0.04)');
+  ctx.fillStyle=g;ctx.fill();ctx.strokeStyle='rgba(56,39,87,0.55)';ctx.lineWidth=2;ctx.stroke();
+  dims.forEach((d,i)=>{const sc=dimScore(d)/100;const[dx,dy]=pt(i,R*sc);const[lx,ly]=pt(i,R+22);ctx.beginPath();ctx.arc(dx,dy,4.5,0,Math.PI*2);ctx.fillStyle=d.color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();ctx.font='13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(d.icon,lx,ly-6);ctx.font="600 9px 'Satoshi',sans-serif";ctx.fillStyle='#767676';const w=d.name.split(' ');ctx.fillText(w[0],lx,ly+5);if(w.length>1)ctx.fillText(w.slice(1).join(' '),lx,ly+14);});
+}
+
+// ══════════════════════════════════════════════
+// PATH NODES
+// ══════════════════════════════════════════════
+function buildNodes() {
+  const wrap = document.getElementById('nodePath'); if(!wrap) return;
+  wrap.innerHTML = '';
+  pathNodes.forEach((n,i) => {
+    if(i>0){const conn=document.createElement('div');conn.className='path-node-connector'+(n.state==='done'?' done':'');wrap.appendChild(conn);}
+    const offset = i%2===0 ? '0' : (i%4===1?'60px':'-60px');
+    const node = document.createElement('div'); node.className='path-node';
+    const stateClass={active:'active-node',done:'done-node',locked:'locked-node'}[n.state]||'locked-node';
+    node.innerHTML=`<div class="node-btn ${stateClass}" style="transform:translateX(${offset})" onclick="${n.state!=='locked'?`startLesson('${n.icon}','${n.label}')`:''}">${n.icon}</div><div class="node-label" style="transform:translateX(${offset})">${n.label}<br><span class="node-xp">${n.xp}</span></div>`;
+    wrap.appendChild(node);
+  });
+}
+
+function startLesson(icon, label) { toast('Starting: '+label+' 🎯'); setTimeout(()=>goTo('screen-lesson'),400); }
+
+// ══════════════════════════════════════════════
+// LEADERBOARD + FRIENDS
+// ══════════════════════════════════════════════
+function buildLB() {
+  const wrap = document.getElementById('lbRows'); if(!wrap) return;
+  wrap.innerHTML = lbRows.map(r=>`<div class="lb-row${r.me?' is-me':''}" onclick="toast('Viewing ${r.name} profile')"><div class="lb-rank">${r.rank}</div><div class="lb-avatar">${r.av}</div><div class="lb-info"><div class="lb-name">${r.name}</div><div class="lb-sub">${r.sub}</div></div><div class="lb-xp-col"><div class="lb-xp">${r.xp}</div><div class="lb-change ${r.ch}">${r.ch==='up'?'↑':r.ch==='down'?'↓':'–'}</div></div></div>`).join('');
+}
+
+function buildFriends() {
+  const wrap = document.getElementById('friendsScroll'); if(!wrap) return;
+  wrap.innerHTML = friends.map(f => f.add ? `<div class="friend-card add-card" onclick="toast('Adding friends...')"><div class="friend-avatar">+</div><div class="friend-name">Add Friend</div></div>` :
+    `<div class="friend-card"><div class="friend-avatar">${f.av}</div><div class="friend-name">${f.name}</div><div class="friend-xp">${f.xp} XP</div><button class="friend-action ${f.action==='Follow'?'follow':''}" onclick="toast('${f.action} ${f.name}! 🎉')">${f.action}</button></div>`
+  ).join('');
+}
+
+function setGodFilter(btn) {
+  document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  toast('Viewing '+btn.textContent+' leaderboard');
+}
+
+// ══════════════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════════════
+const obSteps = [
+  { type:'intro' },
+  { type:'question', q:'What\'s your main goal with PowerUp?', opts:[{icon:'💳',t:'Pay on time every time',sub:'Build payment history'},{icon:'🏦',t:'Connect my bank account',sub:'Earn 500 XP instantly'},{icon:'🎓',t:'Learn about my spending power',sub:'Understand the system'},{icon:'📈',t:'Maximize my spending limit',sub:'Unlock higher limits'}] },
+  { type:'question', q:'How often do you shop with Sezzle?', opts:[{icon:'🛍️',t:'A few times a year',sub:'Casual shopper'},{icon:'📦',t:'A few times a month',sub:'Regular shopper'},{icon:'🔥',t:'Every week',sub:'Frequent shopper'},{icon:'⚡',t:'Multiple times a week',sub:'Power user'}] },
+  { type:'loader' },
+];
+
+function renderObStep() {
+  const step = obSteps[Math.min(obStep, obSteps.length-1)];
+  const pct = Math.round((obStep/(obSteps.length-1))*100);
+  document.getElementById('obProgress').style.width = pct+'%';
+  const btn = document.getElementById('obContinueBtn');
+  const content = document.getElementById('obStepContent');
+  content.innerHTML = '';
+
+  if(step.type === 'intro') {
+    btn.disabled = false;
+    content.innerHTML = `
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;overflow-y:auto">
+        <div style="font-size:72px;animation:zara-bounce 1.5s ease-in-out infinite">🤖</div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--sz-text);text-align:center">Meet Zara ⚡</div>
+        <div style="font-size:14px;color:var(--sz-text-secondary);text-align:center;line-height:1.6;max-width:280px">I'm your personal Growth Hacker. I'll analyze your Sezzle profile and create a custom plan to boost your spending power.</div>
+        <div style="background:var(--sz-surface);border:1px solid var(--sz-border);border-radius:14px;padding:14px 16px;text-align:center;width:100%">
+          <div style="font-size:12px;font-weight:700;color:var(--sz-text-secondary);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Your current spending power</div>
+          <div style="font-family:var(--font-display);font-size:40px;font-weight:900;color:var(--sz-primary)">$373.75</div>
+          <div style="font-size:12px;color:var(--sz-text-secondary);margin-top:4px">With PowerUp, let's unlock more 🚀</div>
+        </div>
+      </div>`;
+  } else if(step.type === 'question') {
+    const key = 'q'+obStep;
+    btn.disabled = !obSelectedVals[key];
+    content.innerHTML = `<div style="flex:1;overflow-y:auto;padding:16px">
+      <div style="font-size:64px;text-align:center;margin-bottom:10px;animation:zara-bounce 1.5s ease-in-out infinite">🤖</div>
+      <div style="background:var(--sz-surface);border:1.5px solid var(--sz-border);border-radius:14px 14px 14px 4px;padding:12px 16px;margin-bottom:18px;font-size:15px;font-weight:600;color:var(--sz-text);line-height:1.4">${step.q}</div>
+      <div class="ob-options">${step.opts.map((o,oi)=>`<div class="ob-option${obSelectedVals[key]===oi?' selected':''}" onclick="obSelect('${key}',${oi},this)"><div class="ob-option-icon" style="background:var(--sz-surface);border:1px solid var(--sz-border)">${o.icon}</div><div class="ob-option-text"><div class="ob-option-title">${o.t}</div><div class="ob-option-sub">${o.sub}</div></div></div>`).join('')}</div>
+    </div>`;
+  } else if(step.type === 'loader') {
+    btn.style.display = 'none';
+    content.innerHTML = `<div class="loader-screen">
+      <div class="loader-zara">🤖</div>
+      <div class="loader-title">Building your profile, Jordan...</div>
+      <div class="loader-sub">Zara is fetching your Sezzle data and crafting your personalized plan.</div>
+      <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+      <div class="loader-steps">
+        <div class="loader-step done" id="lstep1"><div class="loader-step-dot">✓</div>Payment history fetched</div>
+        <div class="loader-step" id="lstep2"><div class="loader-step-dot"></div>Analyzing spending dimensions...</div>
+        <div class="loader-step" id="lstep3"><div class="loader-step-dot"></div>Creating challenge path...</div>
+      </div>
+    </div>`;
+    setTimeout(()=>{const s=document.getElementById('lstep2');if(s){s.className='loader-step done';s.querySelector('.loader-step-dot').textContent='✓';}},900);
+    setTimeout(()=>{const s=document.getElementById('lstep3');if(s){s.className='loader-step done';s.querySelector('.loader-step-dot').textContent='✓';}},1800);
+    setTimeout(()=>{ btn.style.display='block'; btn.disabled=false; btn.textContent="Let's Go! ⚡"; goTo('screen-powerup'); }, 2800);
+  }
+}
+
+function obSelect(key, idx, el) {
+  el.closest('.ob-options').querySelectorAll('.ob-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  obSelectedVals[key] = idx;
+  document.getElementById('obContinueBtn').disabled = false;
+}
+
+function obNext() {
+  obStep++;
+  if(obStep >= obSteps.length) { goTo('screen-powerup'); return; }
+  renderObStep();
+}
+
+function obBack() {
+  if(obStep <= 0) { goTo('screen-home'); return; }
+  obStep--;
+  renderObStep();
+}
+
+// ══════════════════════════════════════════════
+// LESSON
+// ══════════════════════════════════════════════
+function loadLesson(qIdx) {
+  lessonQ = qIdx; lessonSelected = null;
+  const q = lessonQs[qIdx % lessonQs.length];
+  const pct = Math.round(((qIdx+1)/lessonQs.length)*100);
+  document.getElementById('lessonProgress').style.width = pct+'%';
+  const btn = document.getElementById('lessonCheckBtn');
+  btn.textContent = 'Check'; btn.disabled = true; btn.style.background = 'var(--sz-border)'; btn.style.color = 'var(--sz-text-secondary)';
+
+  document.getElementById('lessonContent').innerHTML = `
+    <div class="lesson-mascot">${q.mascot}</div>
+    <div class="lesson-bubble">${q.q}</div>
+    <div class="lesson-options">
+      ${q.options.map((o,oi)=>`<div class="lesson-option" data-correct="${o.correct||false}" onclick="selectLessonOpt(this,${oi})"><div class="lo-icon">${o.icon}</div><div class="lo-text">${o.t}</div></div>`).join('')}
+    </div>`;
+}
+
+function selectLessonOpt(el, idx) {
+  document.querySelectorAll('.lesson-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected'); lessonSelected = idx;
+  const btn = document.getElementById('lessonCheckBtn');
+  btn.disabled=false; btn.style.background='var(--sz-primary)'; btn.style.color='white';
+}
+
+function checkAnswer() {
+  if(lessonSelected === null) return;
+  const opts = document.querySelectorAll('.lesson-option');
+  opts.forEach(o => { if(o.dataset.correct==='true') o.classList.add('correct'); });
+  const sel = opts[lessonSelected];
+  const correct = sel.dataset.correct === 'true';
+  if(!correct) sel.classList.add('wrong');
+  const btn = document.getElementById('lessonCheckBtn');
+
+  if(correct) {
+    confetti();
+    if(lessonQ < lessonQs.length-1) {
+      btn.textContent='Continue ›';
+      btn.onclick=()=>{loadLesson(lessonQ+1);};
+    } else {
+      showMilestone('milestone-complete');
+      document.getElementById('lessonXPEarned').textContent = '50';
+      document.getElementById('totalXPStat').textContent = (getXP()+50).toLocaleString();
+    }
+  } else {
+    btn.textContent='Try Again';
+    btn.onclick=()=>{loadLesson(lessonQ);};
+  }
+}
+
+function closeMilestone(id) { document.getElementById(id).classList.remove('show'); }
+function showMilestone(id) { document.getElementById(id).classList.add('show'); }
+
+function finishLesson() {
+  closeMilestone('milestone-complete');
+  const xp = 50;
+  dims[2].tasks.forEach((_,i)=>{ taskStates['engagement'][i]=true; });
+  toast('+50 XP earned! Lesson complete 🎉');
+  confetti();
+  setTimeout(()=>goTo('screen-powerup'),600);
+}
+
+// ══════════════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════════════
+function buildCalendar() {
+  const wrap = document.getElementById('calDays'); if(!wrap) return;
+  wrap.innerHTML = '';
+  const completed = [1,2,3,4,5];
+  const challenges = {1:'🎯',2:'💳',3:'🏦',4:'🎓',5:'🔥'};
+  // March 2026 starts on Sunday (day 0)
+  for(let i=0;i<6;i++){const d=document.createElement('div');d.className='cal-day';wrap.appendChild(d);}
+  for(let day=1;day<=31;day++){
+    const d=document.createElement('div');
+    if(completed.includes(day)){d.className='cal-day challenge-icon';d.textContent=challenges[day]||'✓';}
+    else if(day===5){d.className='cal-day today';d.textContent=day;}
+    else{d.className='cal-day';d.textContent=day;}
+    if(day>5&&day<=10){d.className='cal-day has-challenge';d.textContent=day;}
+    d.onclick=()=>toast('Day '+day+(day<=5?' — Completed! ✓':day===6?' — Challenge available!':' — Not yet'));
+    wrap.appendChild(d);
+  }
+}
+
+// ══════════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════════
+const chatBots = {
+  'bank': "Great! Go to Profile → Payment Methods → Add Bank Account. It takes 2 minutes and earns you 500 XP — the biggest single action available right now! 🏦",
+  'weak': "Your weakest dimensions are:\n1. Education Modules — 0% complete (easy +120 XP)\n2. Social & Referrals — 0% complete (huge +700 XP available)\n3. Payment History — needs 2 more on-time payments 💪",
+  'rank': "You're ranked #7 this month with 4,580 XP. To reach Top 5 you need +1,420 XP. Fastest path: link bank (+500) + complete 3 lessons (+110) = 610 XP in under 10 min! 🎯",
+  default: "Great question! Based on your profile, I'd focus on linking your bank account first — it's the highest-XP action available to you right now and takes just 2 minutes ⚡"
+};
+
+function openChat() { document.getElementById('chatOverlay').classList.add('open'); }
+function closeChat() { document.getElementById('chatOverlay').classList.remove('open'); }
+
+function appendMsg(text, type) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div'); div.className='msg '+type;
+  if(type==='bot') div.innerHTML=`<div class="msg-sender">Zara</div><div class="msg-bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  else div.innerHTML=`<div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(div); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function sendMsg(text) {
+  appendMsg(text,'user');
+  const lower=text.toLowerCase();
+  let reply=chatBots.default;
+  if(lower.includes('bank')||lower.includes('link')||lower.includes('ach')) reply=chatBots.bank;
+  else if(lower.includes('weak')||lower.includes('dimension')||lower.includes('worst')) reply=chatBots.weak;
+  else if(lower.includes('rank')||lower.includes('tier')||lower.includes('close')||lower.includes('god')) reply=chatBots.rank;
+  setTimeout(()=>appendMsg(reply,'bot'),600);
+}
+
+function sendChatMsg() {
+  const input=document.getElementById('chatInput');
+  const val=input.value.trim(); if(!val) return;
+  sendMsg(val); input.value='';
+}
+
+// ══════════════════════════════════════════════
+// TOAST + CONFETTI
+// ══════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+// alias
+function showToast(msg){toast(msg);}
+
+function confetti() {
+  const wrap=document.getElementById('confettiWrap'); wrap.innerHTML='';
+  const colors=['#382757','#8333D4','#10B981','#F59E0B','#EF4444','#3B82F6'];
+  for(let i=0;i<20;i++){
+    const d=document.createElement('div'); d.className='confetti-dot';
+    d.style.cssText=`left:${Math.random()*100}%;top:${20+Math.random()*30}%;background:${colors[i%colors.length]};animation-delay:${Math.random()*0.3}s;animation-duration:${1+Math.random()*0.8}s`;
+    wrap.appendChild(d);
+  }
+  setTimeout(()=>wrap.innerHTML='',2000);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+buildStreakDots();
+
+// Set all screens hidden except active
+document.querySelectorAll('.screen').forEach(s => {
+  if(!s.classList.contains('active')) s.style.display='none';
+});
+</script>
+</body>
+</html>
