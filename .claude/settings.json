@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(file /Users/jignesh.jain/Power-up-Hackaton-2026/*.png)"
+    ]
+  }
+}
