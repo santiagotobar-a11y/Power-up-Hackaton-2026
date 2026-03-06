@@ -1,0 +1,15 @@
+{
+  "name": "powerup-sezzle",
+  "version": "1.0.0",
+  "description": "PowerUp by Sezzle — hackathon demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.55.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0"
+  }
+}
